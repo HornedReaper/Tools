@@ -30,6 +30,10 @@ These are the currently available tools:
  * XYZ2PNG: converts XYZ images into PNG images. It supports wildcards.
 
    Syntax: `xyz2png file1 [... fileN]`
+   
+ * LcfTrans: extracts text out of LMU and LSD files and creates po files.
+ 
+   Syntax: `lcftrans`
 
  * xyz-thumbnailer: displays thumbnails for XYZ files in your file manager
                     (currently Windows and Linux/GTK3 only)
