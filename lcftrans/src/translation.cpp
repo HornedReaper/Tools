@@ -1,9 +1,18 @@
+/*
+ * Copyright (c) 2016 LcfTrans authors
+ * This file is released under the MIT License
+ * http://opensource.org/licenses/MIT
+ */
+
 #include "translation.h"
 
+#include <map>
 #include <regex>
 #include <sstream>
 #include "data.h"
 #include "command_codes.h"
+#include "ldb_reader.h"
+#include "lmu_reader.h"
 
 static std::string escape(const std::string& str) {
 	static std::regex quotation(R"raw(("))raw");
