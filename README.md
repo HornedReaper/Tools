@@ -31,7 +31,7 @@ These are the currently available tools:
 
    Syntax: `xyz2png file1 [... fileN]`
    
- * LcfTrans: extracts text out of LMU and LSD files and creates po files.
+ * LcfTrans: extracts text out of LDB and LMU files and creates po files.
  
    Syntax: `lcftrans`
 

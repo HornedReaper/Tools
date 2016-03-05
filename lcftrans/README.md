@@ -2,7 +2,7 @@ LcfTrans
 ========
 
 LcfTrans is a small tool to extract strings out of RPG Maker 2000 and 2003
-database (LSD) and map files (LMU). These strings are written to a po
+database (LDB) and map files (LMU). These strings are written to a po
 translation file and can be translated using any tool supporting the po format
 (e.g. Poedit).
 
