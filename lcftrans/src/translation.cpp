@@ -923,7 +923,6 @@ Translation* Translation::fromLDB(const std::string& filename, const std::string
 			const RPG::EventCommand& evt = events[j];
 			int line_count = j + 1;
 
-			e.info = "Common Event " + std::to_string(evt_count) + ", Line " + std::to_string(line_count);
 			e.context = "event";
 
 			switch (evt.code) {
@@ -936,6 +935,7 @@ Translation* Translation::fromLDB(const std::string& filename, const std::string
 					}
 				}
 
+				e.info = "Common Event " + std::to_string(evt_count) + ", Line " + std::to_string(line_count);
 				has_message = true;
 				e.original = evt.string + "\n";
 
@@ -955,10 +955,11 @@ Translation* Translation::fromLDB(const std::string& filename, const std::string
 					if (!e.original.empty()) {
 						e.original.pop_back();
 						t->addEntry(e);
+						e.info = "Common Event " + std::to_string(evt_count) + ", Line " + std::to_string(line_count);
 					}
 				}
 
-				e.info += " (Choice)";
+				e.info = "Common Event " + std::to_string(evt_count) + ", Line " + std::to_string(line_count) + " (Choice)";
 
 				choices.clear();
 				getStrings(choices, events, j);
@@ -987,6 +988,15 @@ Translation* Translation::fromLDB(const std::string& filename, const std::string
 				break;
 			}
 		}
+
+		if (has_message) {
+			// Write last event
+			has_message = false;
+			if (!e.original.empty()) {
+				e.original.pop_back();
+				t->addEntry(e);
+			}
+		}
 	}
 
 	return t;
@@ -1012,7 +1022,6 @@ Translation* Translation::fromLMU(const std::string& filename, const std::string
 				const RPG::EventCommand& evt = page.event_commands[k];
 				int line_count = k + 1;
 
-				e.info = "Event " + std::to_string(rpg_evt.ID) + ", Page " + std::to_string(page_count) + ", Line " + std::to_string(line_count);
 				e.context = "event" + std::to_string(rpg_evt.ID);
 
 				switch (evt.code) {
@@ -1025,6 +1034,7 @@ Translation* Translation::fromLMU(const std::string& filename, const std::string
 						}
 					}
 
+					e.info = "Event " + std::to_string(rpg_evt.ID) + ", Page " + std::to_string(page_count) + ", Line " + std::to_string(line_count);
 					has_message = true;
 					e.original = evt.string + "\n";
 
@@ -1047,7 +1057,7 @@ Translation* Translation::fromLMU(const std::string& filename, const std::string
 						}
 					}
 
-					e.info += " (Choice)";
+					e.info = "Event " + std::to_string(rpg_evt.ID) + ", Page " + std::to_string(page_count) + ", Line " + std::to_string(line_count) + " (Choice)";
 
 					choices.clear();
 					getStrings(choices, page.event_commands, j);
@@ -1074,6 +1084,15 @@ Translation* Translation::fromLMU(const std::string& filename, const std::string
 						}
 					}
 					break;
+				}
+			}
+		
+			if (has_message) {
+				// Write last event
+				has_message = false;
+				if (!e.original.empty()) {
+					e.original.pop_back();
+					t->addEntry(e);
 				}
 			}
 		}
@@ -1167,7 +1186,7 @@ Translation* Translation::fromPO(const std::string& filename) {
 	return t;
 }
 
-static void write_n(std::ostream& out, std::string line, std::string prefix) {
+static void write_n(std::ostream& out, const std::string& line, const std::string& prefix) {
 	if (line.find("\n") != std::string::npos) {
 		std::stringstream ss(escape(line));
 		out << prefix << " \"\"" << std::endl;
@@ -1179,10 +1198,9 @@ static void write_n(std::ostream& out, std::string line, std::string prefix) {
 				out << "\\n\"" << std::endl;
 			}
 
+			out << "\"" << item;
+
 			write_n = true;
-			if (item.length() > 0) {
-				out << "\"" << item;
-			}
 		}
 		out << "\"" << std::endl;
 	} else {
