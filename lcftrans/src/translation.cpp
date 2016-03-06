@@ -176,12 +176,14 @@ Translation* Translation::fromLDB(const std::string& filename, const std::string
 		e.original = "%S" + skill.using_message1;
 		e.context = "skill.using_message1";
 		e.info = "Skill " + std::to_string(i + 1) + ": Using message 1\n%S: Source name";
-		t->addEntry(e);
+		if (e.original != "%S")
+			t->addEntry(e);
 
 		e.original = "%S" + skill.using_message2;
 		e.context = "skill.using_message2";
 		e.info = "Skill " + std::to_string(i + 1) + ": Using message 2\n%S: Source name";
-		t->addEntry(e);
+		if (e.original != "%S")
+			t->addEntry(e);
 	}
 
 	for (size_t i = 0; i < Data::items.size(); ++i) {
