@@ -218,27 +218,32 @@ Translation* Translation::fromLDB(const std::string& filename, const std::string
 		e.original = "%S" + state.message_actor;
 		e.context = "state.message_actor";
 		e.info = "State " + std::to_string(i + 1) + ": Message actor\n%S: Target name";
-		t->addEntry(e);
+		if (e.original != "%S")
+			t->addEntry(e);
 
 		e.original = "%S" + state.message_enemy;
 		e.context = "state.message_enemy";
 		e.info = "State " + std::to_string(i + 1) + ": Message enemy\n%S: Target name";
-		t->addEntry(e);
+		if (e.original != "%S")
+			t->addEntry(e);
 
 		e.original = "%S" + state.message_already;
 		e.context = "state.message_already";
 		e.info = "State " + std::to_string(i + 1) + ": Message already\n%S: Target name";
-		t->addEntry(e);
+		if (e.original != "%S")
+			t->addEntry(e);
 
 		e.original = "%S" + state.message_affected;
 		e.context = "state.message_affected";
 		e.info = "State " + std::to_string(i + 1) + ": Message affected\n%S: Target name";
-		t->addEntry(e);
+		if (e.original != "%S")
+			t->addEntry(e);
 
 		e.original = "%S" + state.message_recovery;
 		e.context = "state.message_recovery";
 		e.info = "State " + std::to_string(i + 1) + ": Message recovery\n%S: Target name";
-		t->addEntry(e);
+		if (e.original != "%S")
+			t->addEntry(e);
 	}
 
 	for (size_t i = 0; i < Data::battlecommands.commands.size(); ++i) {
@@ -254,7 +259,8 @@ Translation* Translation::fromLDB(const std::string& filename, const std::string
 	e.original = "%S" + Data::terms.encounter;
 	e.context = "term";
 	e.info = "Term: Battle encounter\n%S: Enemy name";
-	t->addEntry(e);
+	if (e.original != "%S")
+		t->addEntry(e);
 
 	e.original = Data::terms.special_combat;
 	e.context = "term";
@@ -284,152 +290,182 @@ Translation* Translation::fromLDB(const std::string& filename, const std::string
 	e.original = "%V %U" + Data::terms.exp_received;
 	e.context = "term";
 	e.info = "Term: Battle exp received\n%V: EXP amount\n%U: EXP term";
-	t->addEntry(e);
+	if (e.original != "%V %U")
+		t->addEntry(e);
 
 	e.original = Data::terms.gold_recieved_a + "%V%U" + Data::terms.gold_recieved_b;
 	e.context = "term";
 	e.info = "Term: Battle gold received\n%V: Gold amount\n%U: Gold term";
-	t->addEntry(e);
+	if (e.original != "%V%U")
+		t->addEntry(e);
 
 	e.original = "%S" + Data::terms.item_recieved;
 	e.context = "term";
 	e.info = "Term: Battle item received\n%S: Item name";
-	t->addEntry(e);
+	if (e.original != "%S")
+		t->addEntry(e);
 
 	e.original = "%S" + Data::terms.attacking;
 	e.context = "term";
 	e.info = "Term: Battle attack\n%S: Source name";
-	t->addEntry(e);
+	if (e.original != "%S")
+		t->addEntry(e);
 
 	e.original = "%S" + Data::terms.actor_critical;
 	e.context = "term";
 	e.info = "Term: Battle ally critical hit\n%S: Source name\n%O: Target name";
-	t->addEntry(e);
+	if (e.original != "%S")
+		t->addEntry(e);
 
 	e.original = "%S" + Data::terms.enemy_critical;
 	e.context = "term";
 	e.info = "Term: Battle enemy critical hit\n%S: Source name\n%O: Target name";
-	t->addEntry(e);
+	if (e.original != "%S")
+		t->addEntry(e);
 
 	e.original = "%S" + Data::terms.defending;
 	e.context = "term";
 	e.info = "Term: Battle defending\n%S: Source name";
-	t->addEntry(e);
+	if (e.original != "%S")
+		t->addEntry(e);
 
 	e.original = "%S" + Data::terms.observing;
 	e.context = "term";
 	e.info = "Term: Battle observing\n%S: Source name";
-	t->addEntry(e);
+	if (e.original != "%S")
+		t->addEntry(e);
 
 	e.original = "%S" + Data::terms.focus;
 	e.context = "term";
 	e.info = "Term: Battle focus\n%S: Source name";
-	t->addEntry(e);
+	if (e.original != "%S")
+		t->addEntry(e);
 
 	e.original = "%S" + Data::terms.autodestruction;
 	e.context = "term";
 	e.info = "Term: Battle autodestruct\n%S: Source name";
-	t->addEntry(e);
+	if (e.original != "%S")
+		t->addEntry(e);
 
 	e.original = "%S" + Data::terms.enemy_escape;
 	e.context = "term";
 	e.info = "Term: Battle enemy escape\n%S: Source name";
-	t->addEntry(e);
+	if (e.original != "%S")
+		t->addEntry(e);
 
 	e.original = "%S" + Data::terms.enemy_transform;
 	e.context = "term";
 	e.info = "Term: Battle enemy transform\n%S: Source name";
-	t->addEntry(e);
+	if (e.original != "%S")
+		t->addEntry(e);
 
 	e.original = "%S %V" + Data::terms.enemy_damaged;
 	e.context = "term";
 	e.info = "Term: Battle enemy damaged\n%S: Source name\n%V: Damage amount";
-	t->addEntry(e);
+	if (e.original != "%S %V")
+		t->addEntry(e);
 
 	e.original = "%S" + Data::terms.enemy_undamaged;
 	e.context = "term";
 	e.info = "Term: Battle enemy undamaged\n%S: Target name";
-	t->addEntry(e);
+	if (e.original != "%S")
+		t->addEntry(e);
 
 	e.original = "%S %V" + Data::terms.actor_damaged;
 	e.context = "term";
 	e.info = "Term: Battle actor damaged\n%S: Source name\n%V: Damage amount";
-	t->addEntry(e);
+	if (e.original != "%S %V")
+		t->addEntry(e);
 
 	e.original = "%S" + Data::terms.actor_undamaged;
 	e.context = "term";
 	e.info = "Term: Battle actor undamaged\n%S: Target name";
-	t->addEntry(e);
+	if (e.original != "%S")
+		t->addEntry(e);
 
 	e.original = "%O" + Data::terms.skill_failure_a;
 	e.context = "term";
 	e.info = "Term: Battle skill failure a\n%S: Source name\n%O: Target name";
-	t->addEntry(e);
+	if (e.original != "%O")
+		t->addEntry(e);
 
 	e.original = "%O" + Data::terms.skill_failure_b;
 	e.context = "term";
 	e.info = "Term: Battle skill failure b\n%S: Source name\n%O: Target name";
-	t->addEntry(e);
+	if (e.original != "%O")
+		t->addEntry(e);
 
 	e.original = "%O" + Data::terms.skill_failure_c;
 	e.context = "term";
 	e.info = "Term: Battle skill failure c\n%S: Source name\n%O: Target name";
-	t->addEntry(e);
+	if (e.original != "%O")
+		t->addEntry(e);
 
 	e.original = "%O" + Data::terms.dodge;
 	e.context = "term";
 	e.info = "Term: Battle dodge\n%S: Source name\n%O: Target name";
-	t->addEntry(e);
+	if (e.original != "%O")
+		t->addEntry(e);
 
 	e.original = "%S %O" + Data::terms.use_item;
 	e.context = "term";
 	e.info = "Term: Battle use item\n%S: Source name\n%O: Item name";
-	t->addEntry(e);
+	if (e.original != "%S %O")
+		t->addEntry(e);
 
 	e.original = "%S" + Data::terms.hp_recovery ;
 	e.context = "term";
 	e.info = "Term: Battle hp recovery\n%S: Source name\n%V: HP amount\n%U: HP term";
-	t->addEntry(e);
+	if (e.original != "%S")
+		t->addEntry(e);
 
 	e.original = "%S %V %U" + Data::terms.parameter_increase;
 	e.context = "term";
 	e.info = "Term: Battle parameter increase\n%S: Source name\n%V: Parameter amount\n%U: Parameter term";
-	t->addEntry(e);
+	if (e.original != "%S %V %U")
+		t->addEntry(e);
 
 	e.original = "%S %V %U" + Data::terms.parameter_decrease;
 	e.context = "term";
 	e.info = "Term: Battle parameter decrease\n%S: Source name\n%V: Parameter amount\n%U: Parameter term";
-	t->addEntry(e);
+	if (e.original != "%S %V %U")
+		t->addEntry(e);
 
 	e.original = "%S %V %U" + Data::terms.actor_hp_absorbed;
 	e.context = "term";
 	e.info = "Term: Battle actor_hp_absorbed\n%S: Source name\n%O: Target name\n%V: Parameter amount\n%U: Parameter term";
-	t->addEntry(e);
+	if (e.original != "%S %V %U")
+		t->addEntry(e);
 
 	e.original = "%S %V %U" + Data::terms.enemy_hp_absorbed;
 	e.context = "term";
 	e.info = "Term: Battle enemy_hp_absorbed\n%S: Source name\n%O: Target name\n%V: Parameter amount\n%U: Parameter term";
-	t->addEntry(e);
+	if (e.original != "%S %V %U")
+		t->addEntry(e);
 
 	e.original = "%S %O" + Data::terms.resistance_increase;
 	e.context = "term";
 	e.info = "Term: Battle resistance_increase\n%S: Source name\n%O: Parameter term";
-	t->addEntry(e);
+	if (e.original != "%S %O")
+		t->addEntry(e);
 
 	e.original = "%S %O" + Data::terms.resistance_decrease;
 	e.context = "term";
 	e.info = "Term: Battle resistance_decrease\n%S: Source name\n%O: Parameter term";
-	t->addEntry(e);
+	if (e.original != "%S %O")
+		t->addEntry(e);
 
 	e.original = "%S %V %U" + Data::terms.level_up;
 	e.context = "term";
 	e.info = "Term: Battle level_up\n%S: Source name\n%U: Level\n%V: Level term";
-	t->addEntry(e);
+	if (e.original != "%S %V %U")
+		t->addEntry(e);
 
 	e.original = "%S" + Data::terms.skill_learned;
 	e.context = "term";
 	e.info = "Term: Battle skill_learned\n%S: Source name\n%O: Skill name";
-	t->addEntry(e);
+	if (e.original != "%S")
+		t->addEntry(e);
 
 	e.original = Data::terms.battle_start;
 	e.context = "term";
@@ -606,11 +642,12 @@ Translation* Translation::fromLDB(const std::string& filename, const std::string
 	e.info = "Term: shop_sold3";
 	t->addEntry(e);
 
-	// greeting 1 and 2 concated because it's one sentence
+	// greeting 1 and 2 combined because it's one sentence
 	e.original = Data::terms.inn_a_greeting_1 + "%V%U" + Data::terms.inn_a_greeting_2;
 	e.context = "term";
 	e.info = "Term: inn_a_greeting_1\n%V: Gold amount\n%U: Gold term";
-	t->addEntry(e);
+	if (e.original != "%V%U")
+		t->addEntry(e);
 
 	e.original = Data::terms.inn_a_greeting_3;
 	e.context = "term";
@@ -627,11 +664,12 @@ Translation* Translation::fromLDB(const std::string& filename, const std::string
 	e.info = "Term: inn_a_cancel";
 	t->addEntry(e);
 
-	// greeting 1 and 2 concated because it's one sentence
+	// greeting 1 and 2 combined because it's one sentence
 	e.original = Data::terms.inn_b_greeting_1 + "%V%U" + Data::terms.inn_b_greeting_2;
 	e.context = "term";
 	e.info = "Term: inn_b_greeting_1\n%V: Gold amount\n%U: Gold term";
-	t->addEntry(e);
+	if (e.original != "%V%U")
+		t->addEntry(e);
 
 	e.original = Data::terms.inn_b_greeting_3;
 	e.context = "term";
