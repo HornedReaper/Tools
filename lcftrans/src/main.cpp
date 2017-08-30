@@ -123,17 +123,36 @@ std::string GetFilename(const std::string& str)
 }
 
 void DumpLdb(const std::string& filename, const std::string& encoding) {
-	Translation* t = Translation::fromLDB(filename, encoding);
+	std::array<std::unique_ptr<Translation>, 3> translations = Translation::fromLDB(filename, encoding);
 
-	std::cout << " " << t->getEntries().size() << " strings" << std::endl;
-
+	Translation* t = translations[0].get();
+	{
+	std::cout << " LDB: " << t->getEntries().size() << " strings" << std::endl;
 	std::ofstream outfile(GetFilename(filename) + ".po");
-
 	t->write(outfile);
+	}
+
+	t = translations[1].get();
+	if (t->getEntries().empty()) {
+		std::cout << "Battle Skipped... No strings found." << std::endl;
+	} else {
+		std::cout << " Battle: " << t->getEntries().size() << " strings" << std::endl;
+		std::ofstream outfile(GetFilename(filename) + "_battle.po");
+		t->write(outfile);
+	}
+
+	t = translations[2].get();
+	if (t->getEntries().empty()) {
+		std::cout << "Battle Skipped... No strings found." << std::endl;
+	} else {
+		std::cout << " Common: " << t->getEntries().size() << " strings" << std::endl;
+		std::ofstream outfile(GetFilename(filename) + "_common.po");
+		t->write(outfile);
+	}
 }
 
 void DumpLmu(const std::string& filename, const std::string& encoding) {
-	Translation* t = Translation::fromLMU(filename, encoding);
+	std::unique_ptr<Translation> t = Translation::fromLMU(filename, encoding);
 
 	if (t->getEntries().empty()) {
 		std::cout << " Skipped... No strings found." << std::endl;

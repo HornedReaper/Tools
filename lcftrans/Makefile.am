@@ -5,6 +5,7 @@ lcftrans_SOURCES = \
 	src/translation.h \
 	src/dirent_win.h
 lcftrans_CXXFLAGS = \
+	-std=c++11 \
 	$(LCF_CFLAGS)
 lcftrans_LDADD = \
 	$(LCF_LIBS)

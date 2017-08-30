@@ -129,8 +129,14 @@ const std::vector<Translation::Entry>& Translation::getEntries() const {
 	return entries;
 }
 
-Translation* Translation::fromLDB(const std::string& filename, const std::string& encoding) {
-	Translation* t = new Translation();
+std::array<std::unique_ptr<Translation>, 3> Translation::fromLDB(const std::string& filename, const std::string& encoding) {
+	std::array<std::unique_ptr<Translation>, 3> translations;
+
+	translations[0].reset(new Translation());
+	translations[1].reset(new Translation());
+	translations[2].reset(new Translation());
+
+	Translation* t = translations[0].get();
 
 	LDB_Reader::Load(filename, encoding);
 
@@ -917,34 +923,138 @@ Translation* Translation::fromLDB(const std::string& filename, const std::string
 	e.info = "Term: No";
 	t->addEntry(e);
 
-	// Read common events
+	// Read battle events
 	bool has_message = false;
 	std::vector<std::string> choices;
+
+	t = translations[1].get();
+
+	for (size_t i = 0; i < Data::troops.size(); ++i) {
+		int troop_count = i + 1;
+		const RPG::Troop& troop = Data::troops[i];
+		for (size_t j = 0; j < troop.pages.size(); ++j) {
+			int page_count = j + 1;
+			const RPG::TroopPage& page = troop.pages[j];
+			for (size_t k = 0; k < page.event_commands.size(); ++k) {
+				const RPG::EventCommand& evt = page.event_commands[k];
+				int line_count = k + 1;
+
+				e.context = "battle_event";
+
+				switch (evt.code) {
+				case Cmd::ShowMessage:
+					if (has_message) {
+						// New message
+						if (!e.original.empty()) {
+							e.original.pop_back();
+							t->addEntry(e);
+						}
+					}
+
+					e.info = "Troop " + std::to_string(troop_count) + ", Page " + std::to_string(page_count) + ", Line " + std::to_string(line_count);
+					has_message = true;
+					e.original = evt.string + "\n";
+
+					break;
+				case Cmd::ShowMessage_2:
+					if (!has_message) {
+						// shouldn't happen
+						e.original = "";
+					}
+
+					// Next message line
+					e.original += evt.string + "\n";
+					break;
+				case Cmd::ShowChoice:
+					if (has_message) {
+						has_message = false;
+						if (!e.original.empty()) {
+							e.original.pop_back();
+							t->addEntry(e);
+							e.info = "Troop " + std::to_string(troop_count) + ", Page " + std::to_string(page_count) + ", Line " + std::to_string(line_count);
+						}
+					}
+
+					e.info = "Troop " + std::to_string(troop_count) + ", Page " + std::to_string(page_count) + ", Line " + std::to_string(line_count) + " (Choice)";
+
+					choices.clear();
+					getStrings(choices, page.event_commands, k);
+					if (!choices.empty()) {
+						e.original = choices[0] + "\n";
+
+						for (size_t choice_i = 1; choice_i < choices.size(); ++choice_i) {
+							e.original += choices[choice_i] + "\n";
+						}
+
+						if (!e.original.empty()) {
+							e.original.pop_back();
+							t->addEntry(e);
+						}
+					}
+
+					break;
+				default:
+					if (has_message) {
+						has_message = false;
+						if (!e.original.empty()) {
+							e.original.pop_back();
+							t->addEntry(e);
+						}
+					}
+					break;
+				}
+			}
+
+			if (has_message) {
+				// Write last event
+				has_message = false;
+				if (!e.original.empty()) {
+					e.original.pop_back();
+					t->addEntry(e);
+				}
+			}
+		}
+	}
+
+	// Read common events
+	has_message = false;
+	choices.clear();
+
+	t = translations[2].get();
 
 	for (size_t i = 0; i < Data::commonevents.size(); ++i) {
 		int evt_count = i + 1;
 
 		const std::vector<RPG::EventCommand>& events = Data::commonevents[i].event_commands;
+
+		int msg_line_count = 0;
+
 		for (size_t j = 0; j < events.size(); ++j) {
 			const RPG::EventCommand& evt = events[j];
 			int line_count = j + 1;
+			++msg_line_count;
 
-			e.context = "event";
+			e.context = "common_event";
 
 			switch (evt.code) {
 			case Cmd::ShowMessage:
 				if (has_message) {
 					// New message
 					if (!e.original.empty()) {
-						e.original.pop_back();
-						t->addEntry(e);
+						// Pad with additional "\n";
+						for (int n = 0; i < msg_line_count % 4; ++n) {
+							e.original += "\n";
+						}
+
+						//e.original.pop_back();
+						//t->addEntry(e);
+						e.original += evt.string + "\n";
 					}
+				} else {
+					e.info = "Common Event " + std::to_string(evt_count) + ", Line " + std::to_string(line_count);
+					has_message = true;
+					e.original = evt.string + "\n";
 				}
-
-				e.info = "Common Event " + std::to_string(evt_count) + ", Line " + std::to_string(line_count);
-				has_message = true;
-				e.original = evt.string + "\n";
-
 				break;
 			case Cmd::ShowMessage_2:
 				if (!has_message) {
@@ -1005,16 +1115,17 @@ Translation* Translation::fromLDB(const std::string& filename, const std::string
 		}
 	}
 
-	return t;
+	return translations;
 }
 
-Translation* Translation::fromLMU(const std::string& filename, const std::string& encoding) {
+std::unique_ptr<Translation> Translation::fromLMU(const std::string& filename, const std::string& encoding) {
 	RPG::Map map = *LMU_Reader::Load(filename, encoding);
 
 	bool has_message = false;
 	std::vector<std::string> choices;
 
-	Translation* t = new Translation();
+	std::unique_ptr<Translation> t;
+	t.reset(new Translation());
 
 	for (size_t i = 0; i < map.events.size(); ++i) {
 		const RPG::Event rpg_evt = map.events[i];
@@ -1090,7 +1201,7 @@ Translation* Translation::fromLMU(const std::string& filename, const std::string
 					break;
 				}
 			}
-		
+
 			if (has_message) {
 				// Write last event
 				has_message = false;
@@ -1125,11 +1236,12 @@ static std::string extract_string(const std::string& str) {
 	return "";
 }
 
-Translation* Translation::fromPO(const std::string& filename) {
+std::unique_ptr<Translation> Translation::fromPO(const std::string& filename) {
 	// Super simple parser.
 	// Ignores header and comments but good enough for use in liblcf later...
-	
-	Translation* t = new Translation();
+
+	std::unique_ptr<Translation> t;
+	t.reset(new Translation());
 
 	std::ifstream in(filename);
 

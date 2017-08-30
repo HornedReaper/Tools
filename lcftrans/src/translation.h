@@ -9,6 +9,8 @@
 
 #include <string>
 #include <vector>
+#include <array>
+#include <memory>
 
 class Translation
 {
@@ -35,9 +37,9 @@ public:
 
 	const std::vector<Entry>& getEntries() const;
 
-	static Translation* fromLDB(const std::string& filename, const std::string& encoding);
-	static Translation* fromLMU(const std::string& filename, const std::string& encoding);
-	static Translation* fromPO(const std::string& filename);
+	static std::array<std::unique_ptr<Translation>, 3> fromLDB(const std::string& filename, const std::string& encoding);
+	static std::unique_ptr<Translation> fromLMU(const std::string& filename, const std::string& encoding);
+	static std::unique_ptr<Translation> fromPO(const std::string& filename);
 
 private:
 	std::vector<Entry> entries;
