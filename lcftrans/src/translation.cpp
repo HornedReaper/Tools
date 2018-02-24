@@ -1267,39 +1267,53 @@ std::unique_ptr<Translation> Translation::fromPO(const std::string& filename) {
 			} else if (starts_with(line, "msgid")) {
 				parse_item = true;
 
-				goto read_msgid;
+				read_MsgId(&in, &e, &line);
 			}
 		} else {
 			if (starts_with(line, "msgid")) {
-			read_msgid:;
-				// Parse multiply lines until empty line or msgstr is encountered
-				e.original = extract_string(line);
-
-				while (std::getline(in, line, '\n')) {
-					if (line.empty() || starts_with(line, "msgstr")) {
-						goto read_msgstr;
-					}
-					e.original += "\n" + extract_string(line);
-				}
+			read_MsgId(&in, &e, &line);
 			} else if (starts_with(line, "msgstr")) {
-			read_msgstr:;
-				// Parse multiply lines until empty line or comment
-				e.translation = extract_string(line);
-
-				while (std::getline(in, line, '\n')) {
-					if (line.empty() || starts_with(line, "#")) {
-						break;
-					}
-					e.translation += "\n" + extract_string(line);
-				}
-
-				parse_item = false;
-				t->addEntry(e);
-			}
+			read_MsgStr(&in, &e, &line);
 		}
 	}
 
 	return t;
+}
+
+static void read_MsgId(std::ifstream* pin, Entry* pe, std::string* pline)
+{
+	std::ifstream in = *pin;
+	std::string line = *pline;
+	Entry e = *pe;
+	// Parse multiply lines until empty line or msgstr is encountered
+	e.original = extract_string(line);
+
+	while (std::getline(in, line, '\n')) {
+		if (line.empty() || starts_with(line, "msgstr")) {
+			read_MsgStr(pin, pe, pline);
+			return;
+		}
+		e.original += "\n" + extract_string(line);
+	}
+}
+
+static void read_MsgStr(std::ifstream* pin, Entry* pe, std::string* pline)
+{
+	std::ifstream in = *pin;
+	std::string line = *pline;
+	Entry e = *pe;
+	// Parse multiply lines until empty line or comment
+	e.translation = extract_string(line);
+
+	while (std::getline(in, line, '\n')) {
+		if (line.empty() || starts_with(line, "#")) {
+			break;
+		}
+		e.translation += "\n" + extract_string(line);
+	}
+
+	parse_item = false;
+	t->addEntry(e);
 }
 
 static void write_n(std::ostream& out, const std::string& line, const std::string& prefix) {
