@@ -1251,29 +1251,41 @@ std::unique_ptr<Translation> Translation::fromPO(const std::string& filename) {
 
 	Entry e;
 
-	while (std::getline(in, line, '\n')) {
-		if (!found_header) {
-			if (starts_with(line, "msgstr")) {
+	while (std::getline(in, line, '\n')) 
+	{
+		if (!found_header) 
+		{
+			if (starts_with(line, "msgstr")) 
+			{
 				found_header = true;
 			}
 			continue;
 		}
 
-		if (!parse_item) {
-			if (starts_with(line, "msgctxt")) {
+		if (!parse_item) 
+		{
+			if (starts_with(line, "msgctxt")) 
+			{
 				e.context = extract_string(line);
 
 				parse_item = true;
-			} else if (starts_with(line, "msgid")) {
+			} else if (starts_with(line, "msgid")) 
+			{
 				parse_item = true;
 
 				read_MsgId(&in, &e, &line);
 			}
-		} else {
-			if (starts_with(line, "msgid")) {
-			read_MsgId(&in, &e, &line);
-			} else if (starts_with(line, "msgstr")) {
-			read_MsgStr(&in, &e, &line);
+		} 
+		else 
+		{
+			if (starts_with(line, "msgid")) 
+			{
+				read_MsgId(&in, &e, &line);
+			} 
+			else if (starts_with(line, "msgstr")) 
+			{
+				read_MsgStr(&in, &e, &line);
+			}
 		}
 	}
 
@@ -1288,8 +1300,10 @@ static void read_MsgId(std::ifstream* pin, Entry* pe, std::string* pline)
 	// Parse multiply lines until empty line or msgstr is encountered
 	e.original = extract_string(line);
 
-	while (std::getline(in, line, '\n')) {
-		if (line.empty() || starts_with(line, "msgstr")) {
+	while (std::getline(in, line, '\n')) 
+	{
+		if (line.empty() || starts_with(line, "msgstr")) 
+		{
 			read_MsgStr(pin, pe, pline);
 			return;
 		}
@@ -1305,8 +1319,10 @@ static void read_MsgStr(std::ifstream* pin, Entry* pe, std::string* pline)
 	// Parse multiply lines until empty line or comment
 	e.translation = extract_string(line);
 
-	while (std::getline(in, line, '\n')) {
-		if (line.empty() || starts_with(line, "#")) {
+	while (std::getline(in, line, '\n')) 
+	{
+		if (line.empty() || starts_with(line, "#")) 
+		{
 			break;
 		}
 		e.translation += "\n" + extract_string(line);
@@ -1317,14 +1333,17 @@ static void read_MsgStr(std::ifstream* pin, Entry* pe, std::string* pline)
 }
 
 static void write_n(std::ostream& out, const std::string& line, const std::string& prefix) {
-	if (line.find("\n") != std::string::npos) {
+	if (line.find("\n") != std::string::npos) 
+	{
 		std::stringstream ss(escape(line));
 		out << prefix << " \"\"" << std::endl;
 
 		std::string item;
 		bool write_n = false;
-		while (std::getline(ss, item, '\n')) {
-			if (write_n) {
+		while (std::getline(ss, item, '\n')) 
+		{
+			if (write_n) 
+			{
 				out << "\\n\"" << std::endl;
 			}
 
@@ -1333,7 +1352,9 @@ static void write_n(std::ostream& out, const std::string& line, const std::strin
 			write_n = true;
 		}
 		out << "\"" << std::endl;
-	} else {
+	} 
+	else 
+	{
 		out << prefix << " \"" << escape(line) << "\"" << std::endl;
 	}
 }
